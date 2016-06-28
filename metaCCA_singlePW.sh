@@ -39,6 +39,7 @@ if [[ ! -f result/$KEGG_n"_r1.txt" || ! -f result/$KEGG_n"_r2.txt"   ]];then
   sqlite3 ../metacca.db "select b.* from snp_l_$KEGG_n a, snp_traits b where a.snp_n=b.SNP" | cut -f2-16 -d"|" > $KEGG_n"_XY.txt"
   sqlite3 ../metacca.db "drop table snp_l_$KEGG_n"
   echo "metaCCA..."
+  mkdir -p result
   Rscript --no-save ../bin/metaCCA.r $KEGG_n
 fi
 
