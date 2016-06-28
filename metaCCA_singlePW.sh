@@ -17,6 +17,8 @@ KEGG_n=${KEGG_f%$".txt"}
 echo $KEGG_n
 cd /extra/xc/metacca
 
+mkdir -p ld
+
 if [[ ! -f result/$KEGG_n"_r1.txt" || ! -f result/$KEGG_n"_r2.txt"   ]];then
   if [ ! -f ld/$KEGG_n".ld" ];then
         plink2 --silent --bfile up_pro --extract pathway_checked/$KEGG_f --r2 inter-chr --ld-window-r2 0 --out ld/$KEGG_n
