@@ -15,7 +15,7 @@
 KEGG_f=$1
 KEGG_n=${KEGG_f%$".txt"}
 echo $KEGG_n
-cd /extra/xc/metacca
+cd /extra/xc/metacca        ###working directory, which contains the required files and "bin" folder.
 
 mkdir -p ld
 
