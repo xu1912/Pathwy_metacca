@@ -13,7 +13,7 @@
 ############
 
 KEGG_f=$1
-KEGG_n=${KEGG_f%$".txt"}
+KEGG_n=${KEGG_f%$".txt"}      ###Get pathway name.
 echo $KEGG_n
 cd /extra/xc/metacca        ###working directory, which contains the required files and "bin" folder.
 
