@@ -17,30 +17,26 @@ KEGG_n=${KEGG_f%$".txt"}      ###Get pathway name.
 echo $KEGG_n
 cd /extra/xc/metacca        ###working directory, which contains the required files and "bin" folder.
 
-mkdir -p ld
-
 if [[ ! -f result/$KEGG_n"_r1.txt" || ! -f result/$KEGG_n"_r2.txt"   ]];then
-  if [ ! -f ld/$KEGG_n".ld" ];then
-        plink2 --silent --bfile up_pro --extract pathway_checked/$KEGG_f --r2 inter-chr --ld-window-r2 0 --out ld/$KEGG_n
-  fi
+        mkdir -p input
+        KEGG_snp=$KEGG_n".snplist"
+        if [[ ! -f input/$KEGG_n"_XX.txt" || ! -f input/$KEGG_snp ]];then
+                echo "Prepare S_XX..."
+                plink2 --silent --bfile up_pro_pruned --extract pathway_checked/$KEGG_f --r square --write-snplist --out input/$KEGG_n
+                mv input/$KEGG_n".ld" input/$KEGG_n"_XX.txt"
+        fi
 
-  mkdir -p input
-  cd input
 
-  echo "Prepare S_XX..."
-  KEGG_snp=$KEGG_n"_snpid.txt"
-  if [[  ! -f $KEGG_snp  ||  ! -f $KEGG_n"_XX.txt"  ]];then
-        Rscript --no-save ../bin/vec_to_matrix.R $KEGG_n
-  fi
-  echo "Prepare S_XY..."
-  sqlite3 ../metacca.db "drop table if exists snp_l_$KEGG_n"
-  sqlite3 ../metacca.db "create table snp_l_$KEGG_n (snp_n varchar(20))"
-  sqlite3 ../metacca.db ".import $KEGG_snp snp_l_$KEGG_n"
-  sqlite3 ../metacca.db "select b.* from snp_l_$KEGG_n a, snp_traits b where a.snp_n=b.SNP" | cut -f2-16 -d"|" > $KEGG_n"_XY.txt"
-  sqlite3 ../metacca.db "drop table snp_l_$KEGG_n"
-  echo "metaCCA..."
-  mkdir -p result
-  Rscript --no-save ../bin/metaCCA.r $KEGG_n
+        if [ ! -f input/$KEGG_n"_XY.txt" ];then
+                cd input
+                echo "Prepare S_XY..."
+                sqlite3 ../metacca.db "drop table if exists snp_l_$KEGG_n"
+                sqlite3 ../metacca.db "create table snp_l_$KEGG_n (snp_n varchar(20))"
+                sqlite3 ../metacca.db ".import $KEGG_snp snp_l_$KEGG_n"
+                sqlite3 ../metacca.db "select b.snp, b.allele_0, b.allele_1, b.trait1_b_norm, b.trait1_se, b.trait2_b_norm, b.trait2_se, b.trait3_b_norm, b.trait3_se, b.trait4_b_norm, b.trait4_se, b.trait5_b_norm, b.trait5_se,  b.trait7_b_norm, b.trait7_se from snp_l_$KEGG_n a, snp_traits b where a.snp_n=b.SNP" > $KEGG_n"_XY.txt"
+                sqlite3 ../metacca.db "drop table snp_l_$KEGG_n"
+                echo "metaCCA..."
+                Rscript --no-save ../bin/metaCCA.r $KEGG_n
+        fi
 fi
-
 echo "DONE."
