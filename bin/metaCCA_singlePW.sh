@@ -15,7 +15,8 @@
 KEGG_f=$1
 KEGG_n=${KEGG_f%$".txt"}      ###Get pathway name.
 echo $KEGG_n
-cd /extra/xc/metacca        ###working directory, which contains the required files and "bin" folder.
+RPATH=/extra/xc/metacca
+cd $RPATH        ###working directory, which contains the required files and "bin" folder.
 
 if [[ ! -f result/$KEGG_n"_r1.txt" || ! -f result/$KEGG_n"_r2.txt"   ]];then
         mkdir -p input
@@ -35,8 +36,11 @@ if [[ ! -f result/$KEGG_n"_r1.txt" || ! -f result/$KEGG_n"_r2.txt"   ]];then
                 sqlite3 ../metacca.db ".import $KEGG_snp snp_l_$KEGG_n"
                 sqlite3 ../metacca.db "select b.snp, b.allele_0, b.allele_1, b.trait1_b_norm, b.trait1_se, b.trait2_b_norm, b.trait2_se, b.trait3_b_norm, b.trait3_se, b.trait4_b_norm, b.trait4_se, b.trait5_b_norm, b.trait5_se,  b.trait7_b_norm, b.trait7_se from snp_l_$KEGG_n a, snp_traits b where a.snp_n=b.SNP" > $KEGG_n"_XY.txt"
                 sqlite3 ../metacca.db "drop table snp_l_$KEGG_n"
-                echo "metaCCA..."
-                Rscript --no-save ../bin/metaCCA.r $KEGG_n
+                cd ../
         fi
+        
+        cd input
+        echo "metaCCA..."
+        Rscript --no-save $RPATH/bin/metaCCA.r $KEGG_n
 fi
 echo "DONE."
