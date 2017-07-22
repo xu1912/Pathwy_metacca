@@ -14,7 +14,6 @@ if [[ ! -f result/$GENE_N"_r1.txt" || ! -f result/$GENE_N"_r2.txt"   ]];then
                 rm -f $GENE_N.log
         fi
 
-
         if [ ! -f input/$GENE_N"_XY.txt" ];then
                 cd input
                 echo "Prepare S_XY..."
