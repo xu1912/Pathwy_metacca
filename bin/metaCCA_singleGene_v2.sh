@@ -6,7 +6,7 @@ cd $RPATH
 if [[ ! -f result/$GENE_N"_r1.txt" || ! -f result/$GENE_N"_r2.txt"   ]];then
         mkdir -p input
         GENE_snp=$GENE_N".snplist"
-        if [[ ! -f input/$GENE_N"_XX.txt" || ! -f input/$KEGG_snp ]];then
+        if [[ ! -f input/$GENE_N"_XX.txt" || ! -f input/$GENE_snp ]];then
                 echo "Prepare S_XX..."
                 plink2 --silent --bfile snp_in_ref_gene --extract gene/$GENE_N.out --r square --write-snplist --out input/$GENE_N
                 mv input/$GENE_N".ld" input/$GENE_N"_XX.txt"
